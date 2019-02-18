@@ -1,0 +1,51 @@
+COMPETENCE
+CLIENTSTYPE
+1 empty
+2 empty
+3 AB
+4 A
+5 empty
+6 B
+7 AB
+8 AB
+9 A
+10 empty
+11 empty
+12 empty
+13 A
+14 empty
+15 B
+16 A
+TRUCKSTYPE
+AB 0
+A 1 2 3
+B 4 5 6
+EMPTY 7
+COORD
+1 30 40
+2 37 52
+3 49 49
+4 52 64
+5 31 62
+6 52 33
+7 42 41
+8 52 41
+9 57 58
+10 62 42
+11 42 57
+12 27 68
+13 43 67
+14 58 48
+15 58 27
+16 37 69
+TRUCKS
+0 7 
+1 9 12 
+2 4 13 
+3 8 10 16 
+4 15 6 
+5 3 
+6 5 11 
+7 14 2 
+VALUE
+560.066
