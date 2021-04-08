@@ -8,12 +8,27 @@
 #include <string>
 using namespace std;
 
+/**
+Class for the Simulated Annealing of the TSP
+After calling the TSP class, we have a tour for each truck
+But this solution is not the best because we used algortihm that do not return
+the best solution at each step.
+
+The Simulated Annealing will start from a solution given by the TSP solving.
+Then it will go from a solution to another by adding a truck, remove a truck,
+change two clients positions in a tour, or change allocate a client to another tour
+
+At the beginning, the SA will save the current solution determined even if
+it is a worse solution than the last one. So that the SA can explore the solution
+domain. Then it will start converge to a solution by keeping only the best solution.
+**/
 SA::SA()
 {
 
 }
 
 /**
+The main part of the algorithm
 **/
 std::vector<std::vector<int>> SA::simulatedAnnealing(Graph graph, EvaluateTour e, std::vector<std::vector<int>> nodes, int kmax, float t, float alpha, float energy_max)
 {
@@ -26,6 +41,8 @@ std::vector<std::vector<int>> SA::simulatedAnnealing(Graph graph, EvaluateTour e
 	std::vector<std::vector<int>> sn;
 	float energy_sn;
 
+	/* this float represents the exploration, at the beginning, high temperature means exploration
+	as the temperature decrease, less exploration */
 	float temperature = t;
 
 	int m = graph.vehicles + 2;
@@ -35,11 +52,16 @@ std::vector<std::vector<int>> SA::simulatedAnnealing(Graph graph, EvaluateTour e
 	int k = 0;
 	while(k < kmax && energy_s > energy_max)
 	{
+		/// Get the neighbor solution of the current one
 		sn = getNeighbor(graph, s, m);
+		/// evaluate it
 		energy_sn = getEnergy(graph, e, sn);
 
+		/// if the neighbor is better, we keep it
+		/// or if the temperature allows us to keep it, we keep it (randomly)
 		if(energy_sn < energy_s || ((double)rand() / (RAND_MAX)) < getProbability(energy_sn-energy_s, temperature))
 		{
+			/// change the current solution
 			s = sn;
 			energy_s = energy_sn;
 		}
@@ -50,6 +72,7 @@ std::vector<std::vector<int>> SA::simulatedAnnealing(Graph graph, EvaluateTour e
 			energy_g = energy_s;
 		}
 		k += 1;
+		/// decrease the temperature
 		temperature *= alpha;
 	}
 
@@ -58,18 +81,25 @@ std::vector<std::vector<int>> SA::simulatedAnnealing(Graph graph, EvaluateTour e
 	return g;
 }
 
+/*
+Function that returns the evaluation of a solution, the sum of the distances travelled
+by each truck
+*/
 double SA::getEnergy(Graph graph, EvaluateTour e, std::vector<std::vector<int>> sn)
 {
 	return e.evaluate(graph, sn);
 	//return e.evaluate(graph, sn) + 100 * std::max((int)(sn.size() - graph.vehicles), 0);
 }
 
-
 float SA::getProbability(float e, float t)
 {
 	return exp(-e / t);
 }
 
+/*
+Returns a solution from another one by adding a truck, remove a truck, change a client from
+a tour to another, or swap two clients in the same tour
+*/
 std::vector<std::vector<int>> SA::getNeighbor(Graph graph, std::vector<std::vector<int>> s, int m)
 {
 	double r = ((double) rand() / (RAND_MAX));

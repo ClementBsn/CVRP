@@ -6,12 +6,18 @@
 #include <string>
 using namespace std;
 
+/*
+Class for the resolution of the Bin Packing Problem
+We have to allocate each client to a truck (trucks are limited in the demand capacity)
+We have to allocate the client so that we use the minimum of trucks
+*/
 BP::BP()
 {
 
 }
 
-/* Returns a list of integers that is the list of the indexes of clients sorted by decreasing order of their demand
+/*
+Returns a list of the indexes of clients, sorted by decreasing order of their demand
  */
 std::vector<int> BP::getDecreasingOrder(std::map<int, int> demand, int dimension)
 {
@@ -19,6 +25,7 @@ std::vector<int> BP::getDecreasingOrder(std::map<int, int> demand, int dimension
 	for (int i = 3; i <= dimension; i ++)
 	{
 		int index = 0;
+
 		for (int j = 0;j<v.size();j++){
 			if (demand[i] > demand[v[j]]){
 				index = j;
@@ -26,19 +33,24 @@ std::vector<int> BP::getDecreasingOrder(std::map<int, int> demand, int dimension
 			}
 			index = j+1;
 		}
+
 		v.insert(v.begin()+index,i);
 	}
 
 	return v;
 }
 
-/* First Fit Decreasing Algorithm: Returns a list of list that represents the clients affected to each truck
+/*
+First Fit Decreasing Algorithm
+This will return a list where each element is the list of clients of a truck
 */
 std::vector<std::vector<int>> BP::firstFitDecreasing(Graph graph)
 {
+	/* This is for the part where we add a competence to each driver of a truck */
 	#ifdef COMPETENCE
 		return firstFitDecreasingService(graph);
 	#endif
+
 	std::vector<int> decreasingOrder = getDecreasingOrder(graph.demand, graph.dimension);
 	std::vector<std::vector<int>> allocation;
 	std::vector<int> weights;
@@ -52,12 +64,13 @@ std::vector<std::vector<int>> BP::firstFitDecreasing(Graph graph)
 
 	bool demandAdded;
 
-	/* for every demands i */
+	/* for every demands i in the decreasing order */
 	for (int i = 0; i < decreasingOrder.size(); ++i)
 	{
 		index = decreasingOrder[i];
 		d = graph.demand[index];
 		demandAdded = false;
+
 		/* for every truck, we try to put this demand */
 		for (int j = 0; j <= k; ++j)
 		{
@@ -70,6 +83,7 @@ std::vector<std::vector<int>> BP::firstFitDecreasing(Graph graph)
 				break;
 			}
 		}
+
 		/* if demand has not been added to a truck, add a truck and add demand to it */
 		if (!demandAdded)
 		{
@@ -80,15 +94,15 @@ std::vector<std::vector<int>> BP::firstFitDecreasing(Graph graph)
 			weights.push_back(d);
 		}
 	}
-	// for (int it = 0; it != allocation.size(); ++it)
-	// {
-	// 	cout << "----------" << endl;
-	// 	for (int it2 = 0; it2 != allocation[it].size(); ++it2)
-	// 		cout << allocation[it][it2] << endl;
-	// }
+
 	return allocation;
 }
 
+/*
+First Fit Decreasing Algorithm with the competence
+Each client ask for a specific competence that the driver of the truck has to have
+This will return a list where each element is the list of clients of a truck
+*/
 std::vector<std::vector<int>> BP::firstFitDecreasingService(Graph graph)
 {
 		std::vector<int> decreasingOrder = getDecreasingOrder(graph.demand, graph.dimension);
@@ -97,7 +111,6 @@ std::vector<std::vector<int>> BP::firstFitDecreasingService(Graph graph)
 
 		int d;
 		int index;
-		
 
 		bool demandAdded;
 
@@ -129,7 +142,6 @@ std::vector<std::vector<int>> BP::firstFitDecreasingService(Graph graph)
 				continue;
 			}
 		}
-
 
 		for (int i = 0; i<graph.vehicles; i++){
 			vector<int> tmp;
@@ -188,7 +200,6 @@ std::vector<std::vector<int>> BP::firstFitDecreasingService(Graph graph)
 		}
 
 		rest.insert(rest.end(),ve.begin(),ve.end());
-		
 
 		/* for every demands i */
 		for (int i = 0; i < rest.size(); ++i)
@@ -218,13 +229,6 @@ std::vector<std::vector<int>> BP::firstFitDecreasingService(Graph graph)
 				weights.push_back(d);
 			}
 		}
-		// for (int it = 0; it != allocation.size(); ++it)
-		// {
-		// 	cout << "----------" << endl;
-		// 	for (int it2 = 0; it2 != allocation[it].size(); ++it2)
-		// 		cout << allocation[it][it2] << " ";
-		// 	cout << endl;
-		// }
+
 		return allocation;
 }
-

@@ -2,10 +2,16 @@
 #include "BP.h"
 #include "EvaluateTour.h"
 
+/*
+Class for the resolution of the Travelling Salesman Problem
+This class is called after the SA.cpp class
+The SA returns the list of clients allocated to each truck
+Here we will optimise each tour of each truck so that each tour minimise
+the distance travelled by the truck
+*/
 TSP::TSP()
 {
 }
-
 
 vector<int> TSP::nearest_neighbor(Graph graph, vector<int> nodes)
 {
@@ -28,8 +34,7 @@ vector<int> TSP::nearest_neighbor(Graph graph, vector<int> nodes)
 		nodes.erase(nodes.begin() + index);
 	}
 	tour.push_back(graph.depot);
-	/*for (int it = 0; it != tour.size(); ++it)
-		cout << tour[it] << endl;*/
+
 	return tour;
 }
 
@@ -58,11 +63,15 @@ vector<int> TSP::nearest_insertion(Graph graph, vector<int> nodes)
 		tour.insert(tour.begin() + index + 1, nodes[node]);
 		nodes.erase(nodes.begin() + node);
 	}
-	/*for (int it = 0; it != tour.size(); ++it)
-		cout << tour[it] << endl;*/
+
 	return tour;
 }
 
+/*
+This algorithm will optimise each tour, for this, each truck start at the warehouse
+and then will go to the nearest client
+Then from this client, the truck will go the nearest client, etc.
+*/
 vector<vector<int>> TSP::nearestNeighbor(Graph graph, vector<vector<int>> nodes)
 {
 	vector<vector<int>> tours;
@@ -72,16 +81,15 @@ vector<vector<int>> TSP::nearestNeighbor(Graph graph, vector<vector<int>> nodes)
 		tours.push_back(nearest_neighbor(graph, nodes[i]));
 	}
 
-	// for (int it = 0; it != tours.size(); ++it)
-	// {
-	// 	cout << "----------" << endl;
-	// 	for (int it2 = 0; it2 != tours[it].size(); ++it2)
-	// 		cout << tours[it][it2] << " ";
-	// 	cout << endl;
-	// }
 	return tours;
 }
 
+/*
+This algorithm will optimise each tour, for this, each tour of a truck is composed
+by the warehouse at the begining and at the end.
+Then we will add to the tour each client one by one by inserting it between two clients/warehouse
+where it fits best
+*/
 vector<vector<int>> TSP::nearestInsertion(Graph graph, vector<vector<int>> nodes)
 {
 	vector<vector<int>> tours;
@@ -91,13 +99,6 @@ vector<vector<int>> TSP::nearestInsertion(Graph graph, vector<vector<int>> nodes
 		tours.push_back(nearest_insertion(graph, nodes[i]));
 	}
 
-	// for (int it = 0; it != tours.size(); ++it)
-	// {
-	// 	cout << "----------" << endl;
-	// 	for (int it2 = 0; it2 != tours[it].size(); ++it2)
-	// 		cout << tours[it][it2] << " ";
-	// 	cout << endl;
-	// }
 	return tours;
 }
 
